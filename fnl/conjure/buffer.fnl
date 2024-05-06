@@ -19,13 +19,11 @@
     (if (or (= -1 buf) (not loaded?))
       (let [buf (if loaded?
                   buf
-                  (let [buf (nvim.fn.bufadd buf-name)]
-                    (nvim.fn.bufload buf)
+                  (let [buf (nvim.create_buf false true)
+                        ft (vim.filetype.match {:filename buf-name})]
+                    (nvim.buf_set_name buf buf-name)
+                    (nvim.buf_set_option buf :filetype ft)
                     buf))]
-        (nvim.buf_set_option buf :buftype :nofile)
-        (nvim.buf_set_option buf :bufhidden :hide)
-        (nvim.buf_set_option buf :swapfile false)
-        (unlist buf)
         (when new-buf-fn
           (new-buf-fn buf))
         buf)
